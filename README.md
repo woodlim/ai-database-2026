@@ -17,7 +17,7 @@ AI에이전트 개발자 데이터베이스 리포지토
   - MySQL / MariaDB
   - SQL Server
 
-위 대부분 상용소프트웨어(비용을 지불하는) , Postgre는 오픈소스 System
+위 대부분 상용소프트웨어(비용을 지불하는) , Postgre는 오픈소스 System. 라이선스 비용 X
 
 ### DB의 특징
 
@@ -85,6 +85,10 @@ GUI DB 관리 실행 툴
 ![](assets/20260915_143406_image.png)
 
 - 설치완료 후 화면
+- 사용자 user 생성 비밀번호 입력
+
+![](assets/20260915_172312_image.png)
+
 
 ### PostgreSQL 이미지 다운로드
 
