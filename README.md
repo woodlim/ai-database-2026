@@ -1,3 +1,5 @@
+![](assets/20260916_173355_image.png)
+
 # ai-database-2026
 
 AI에이전트 개발자 데이터베이스 리포지토
@@ -355,16 +357,13 @@ values ('최민식');
 
 ![](assets/20260916_145221_image.png)
 
-
 NULL 조회 쿼리
 
 - `where 컬럼 is null / is not null`
 
-
 ### 테이블 설계
 
 - 일반적으로 DB설계 , 테이블 설계 통칭
-
 
 ### 필요 개념
 
@@ -376,7 +375,6 @@ NULL 조회 쿼리
 - 테이블 관계
 
 학생과 과목 수강 관리 테이블 설계
-
 
 #### 테이블 설계?
 
@@ -390,8 +388,10 @@ NULL 조회 쿼리
   - 수강 과목
   - 담당강사
   - 수강 신청일
-- 엑셀에서는 데이터를 제대로 관리하기 힘들다
 
+![](assets/20260916_173405_image.png)
+
+- 엑셀에서는 데이터를 제대로 관리하기 힘들다
 
 #### 좋은 테이블 설계
 
@@ -401,7 +401,6 @@ NULL 조회 쿼리
 - 테이블 간의 관계가 외래키(FK)로 연결한다
 - 잘못된 데이터가 들어가지 않도록 제약조건을 사용한다
 - 조회 , 수정이 이해하기 쉬운 구조여야 한다
-
 
 #### 학생 테이블 컬럼 데이터타입 선택
 
@@ -417,7 +416,6 @@ NULL 조회 쿼리
 
 - 정확한 숫자는 numeric , 긴 글은 text , 날짜만 필요하면 date, 참/거짓은 boolean
 
-
 #### 제약 조건
 
 ##### 1.기본키
@@ -431,14 +429,11 @@ NULL 조회 쿼리
 
 PostgreSQL은 `generated always as identity` 숫자 타입의 자동증가 , `primary key`가 기본키를 지정한다.
 
-
 ```sql
 id int generated always as identity primary key
 ```
 
-
 MySQL에서 auto_increment, Oracle에서 identity로 문법이 다름.
-
 
 ##### 2.외래키
 
@@ -453,4 +448,5 @@ Enrollments(수강)
 - id : 수강아이디 PK
 - students_id : 학생아이디 FK
 - course_name : 수강명
+
 ```
