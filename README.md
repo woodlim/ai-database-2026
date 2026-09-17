@@ -1,6 +1,4 @@
-![](assets/20260916_173355_image.png)
-
-# ai-database-2026
+## ai-database-2026
 
 AI에이전트 개발자 데이터베이스 리포지토
 
@@ -440,6 +438,7 @@ MySQL에서 auto_increment, Oracle에서 identity로 문법이 다름.
 다른 테이블의 기본키를 참조하는 컬럼. Foreign Key(FK)
 
 ```plaintext
+
 Students(학생)
 - id : 학생아이디 PK
 - name : 학생이름
@@ -450,3 +449,167 @@ Enrollments(수강)
 - course_name : 수강명
 
 ```
+
+![](https://github.com/hugoMGSung/ai-database-2026/raw/main/assets/20260916_171157_image.png)
+
+```sql
+-- 수강 테이블 생성쿼리
+create table enrollments (
+	id int generated always as identity primary key,
+	students_id int not null, -- 수강하는 학생이 없으면 안됨
+	course_name varchar(100) not null,  -- 과목명 없으면 안됨
+	enrolled_at timestamp default current_timestamp,
+	constraint fk_enrollments_students
+		foreign key (students_id)
+		references students(id)
+);
+```
+
+## 3일차
+
+### 추가 쿼리
+
+- 테이블 수정 쿼리 - 이미 만들어진 상태의 테이블을 수정하는 쿼리
+
+```sql
+-- 테이블 컬럼 사이즈 수정
+alter table students 
+alter column email type varchar(100);
+```
+
+- 이외 제약조건 수정 , 이름 수정 , 불필요한 컬럼 삭제 등 수정 쿼리 작업
+
+### 제약조건
+
+#### PK/FK 관계
+
+![](assets/20260917_094757_image.png)
+
+- students 부모 테이블 - enrollments 자식 테이블
+
+#### NOT NULL 제약조건
+
+- 해당 컬럼은 반드시 값이 들어가야 함
+
+```pgsql
+name varchar(50) not null
+```
+
+- 아래의 쿼리는 오류가 발생함
+
+```sql
+-- 데이터 삽입
+insert into students (age,major)
+values (23,'경영학과');
+```
+
+![](assets/20260917_102559_image.png)
+
+students 테이블에 name은 not-null 제약조건으로 반드시 입력해야하는데 현재 없기 때문에 오류
+
+- 이전에 생성된 컬럼을 NOT NULL로 변경하는 쿼리
+
+```sql
+ALTER TABLE public.students ALTER COLUMN email SET NOT NULL;
+```
+
+- 오류 화면
+
+![](assets/20260917_102932_image.png)
+
+- NOT NULL 로 변경 불가할때 생기는 오류 화면
+- 이전 테이블에 새 컬럼 추가할때 NOT NULL 로만은 생성 불가 . NULL로는 생성 가능
+
+#### UNIQUE 제약 조건
+
+- 중복이 허용되지 않는 제약조건
+- 보통 이메일이 다른 사용자와 중복은 허용하지 않으나 , 내 이메일은 다른 걸로 변경가능
+
+```pgsql
+ALTER TABLE public.students ADD CONSTRAINT uk_students_email UNIQUE (email);
+
+```
+
+![](assets/20260917_104720_image.png)
+
+#### CHECK 제약조건
+
+- 값이 특정 조건을 만족해야만 저장되는 제약조건
+  - 초등학교 학년 : 1~6
+  - 대학교 학년 : 1~4
+  - 나이 : 0세 이상 , 200세 이하
+  - 금액 : 1000원 이상
+- INT 타입은 - 21억 ~ 21억까지 수를 저장 . 모두 허용하면 학년에 음수나 0, 1~4 이상의 다른 수 입력 가능
+- 이를 방지해서 정확한 데이터만 입력
+
+```pgsql
+-- 학년컬럼추가
+ALTER TABLE public.students ADD grade int NULL;
+
+```
+
+- 체크 제약조건 추가
+
+```pgsql
+ALTER TABLE public.students ADD CONSTRAINT ck_students_grade CHECK (grade>0 and grade <= 4);
+```
+
+#### DEFAULT 제약조건
+
+- 값을 입력하지 않으면자동으로 들어가는 기본값
+
+```pgsql
+stock int default 0
+created_at timestamp default current_timestamp
+```
+
+- 수정쿼리
+
+```pgsql
+ALTER TABLE public.products ALTER COLUMN category SET DEFAULT '미정';
+```
+
+### 테이블 모델링
+
+관계형 DB에는 테이블간 관계에 몇 가지 관계성이 존재
+
+
+| 관게   | 설명                                            | 예시                     |
+| ------ | ----------------------------------------------- | ------------------------ |
+| 일대다 | 부모 테이블 한 행이 자식 테이블 여러행과 연결   | 학생과 수강신청 관계     |
+| 일대일 | 테이블 한 행이 자식 테이블 한 행과 연결         | 사용자와 사용자 상세정보 |
+| 다대다 | 부모 테이블 여러 행이 자식 테이블 여러행과 연결 | 학생과 과목              |
+
+- 다대다 관계는 DB에서 구현 불가. 일대다 / 일대다 관계로 분리해서 구현
+
+![](assets/20260917_121723_image.png)
+
+- 학생 한명은 여러 과목을 수강할 수 있음
+- 과목 하나에는 여러 학생이 수강할 수 있음
+- 학생 테이블 주요정보
+  - 이름, 이메일, 나이, 전공
+- 과목 테이블 주요정보
+  - 타이틀, 교강사, 시수
+- 수강 신청 주요정보
+  - 수강 학생정보 구분값, 과목 정보 구분값
+
+
+#### 모델링 툴
+
+- ERD(Entity Relationship Diagram) 모델링
+- https://www.erdcloud.com/
+
+
+![](assets/20260917_150858_image.png)
+
+- 학생 과목 수강관리 테이블 ERD
+
+
+### JOIN
+
+관계형 데이터베이스에서 여러개로 나눈 테이블의 정보를 하나로 합쳐서 조회하는 것
+
+
+### 트랜잭션
+
+- 커밋, 롤백
