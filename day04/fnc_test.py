@@ -5,5 +5,5 @@ def sayHello(name):
 
 
 # 함수 호출
-sayHello('우드')                
+sayHello('우드')             
 sayHello('머큐리')
